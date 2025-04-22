@@ -15,7 +15,7 @@ typedef struct {
 
 int readBoardFromStream(FILE* file, int board[MAX_SIZE][MAX_SIZE]) {
     if (file == NULL) {
-        printf("Live three does not exist\n");
+        printf("Live three does not exist.\n");
         return 0;
     }
 
@@ -73,11 +73,9 @@ void findLiveThree(int board[MAX_SIZE][MAX_SIZE], int size) {
             for (int x = 0; x < size - 2; x++) {
                 Position stones[3] = {{x, y}, {x+1, y}, {x+2, y}};
                 if (isLiveThree(board, size, color, stones)) {
-                    if (!found) {
-                        printf("LiveThree found:\n");
-                        found = true;
-                    }
-                    printf("(%c, %d)(%c, %d)(%c, %d)\n", x+'A', y+1, x+1+'A', y+1, x+2+'A', y+1);
+                    printf("Live three found: ");
+                    printf("(%c, %2d)(%c, %2d)(%c, %2d)\n", x+'A', y+1, x+1+'A', y+1, x+2+'A', y+1);
+                    found = true;
                 }
             }
 
@@ -85,11 +83,9 @@ void findLiveThree(int board[MAX_SIZE][MAX_SIZE], int size) {
             for (int y = 0; y < size - 2; y++) {
                 Position stones[3] = {{x, y}, {x, y+1}, {x, y+2}};
                 if (isLiveThree(board, size, color, stones)) {
-                    if (!found) {
-                        printf("LiveThree found:\n");
-                        found = true;
-                    }
-                    printf("(%c, %d)(%c, %d)(%c, %d)\n", x+'A', y+1, x+'A', y+2, x+'A', y+3);
+                    printf("Live three found: ");
+                    printf("(%c, %2d)(%c, %2d)(%c, %2d)\n", x+'A', y+1, x+'A', y+2, x+'A', y+3);
+                    found = true;
                 }
             }
 
@@ -97,11 +93,9 @@ void findLiveThree(int board[MAX_SIZE][MAX_SIZE], int size) {
             for (int x = 0; x < size - 2; x++) {
                 Position stones[3] = {{x, y}, {x+1, y+1}, {x+2, y+2}};
                 if (isLiveThree(board, size, color, stones)) {
-                    if (!found) {
-                        printf("LiveThree found:\n");
-                        found = true;
-                    }
-                    printf("(%c, %d)(%c, %d)(%c, %d)\n", x+'A', y+1, x+1+'A', y+2, x+2+'A', y+3);
+                    printf("Live three found: ");
+                    printf("(%c, %2d)(%c, %2d)(%c, %2d)\n", x+'A', y+1, x+1+'A', y+2, x+2+'A', y+3);
+                    found = true;
                 }
             }
 
@@ -109,17 +103,15 @@ void findLiveThree(int board[MAX_SIZE][MAX_SIZE], int size) {
             for (int x = 2; x < size; x++) {
                 Position stones[3] = {{x, y}, {x-1, y+1}, {x-2, y+2}};
                 if (isLiveThree(board, size, color, stones)) {
-                    if (!found) {
-                        printf("LiveThree found:\n");
-                        found = true;
-                    }
-                    printf("(%c, %d)(%c, %d)(%c, %d)\n", x+'A', y+1, x-1+'A', y+2, x-2+'A', y+3);
+                    printf("Live three found: ");
+                    printf("(%c, %2d)(%c, %2d)(%c, %2d)\n", x+'A', y+1, x-1+'A', y+2, x-2+'A', y+3);
+                    found = true;
                 }
             }
     }
 
     if (!found)
-        printf("Live three does not exist\n");
+        printf("Live three does not exist.\n");
 }
 
 int main(int argc, char* argv[]) {
@@ -147,4 +139,3 @@ int main(int argc, char* argv[]) {
 
     return 0;
 }
-

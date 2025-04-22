@@ -71,10 +71,10 @@ bool findDeadFour() {
                         
                         if ((forwardBlocked && backwardEmpty) || (backwardBlocked && forwardEmpty)) {
                             if (!found) {
-                                printf("Dead Four found: ");
+                                printf("Dead four found: ");
                                 found = true;
                             } else {
-                                printf("\nDead Four found: ");
+                                printf("\nDead four found: ");
                             }
                             
                             char buf[10];
@@ -111,7 +111,7 @@ int main() {
     size = row > size ? row : size;  
     
     if (!findDeadFour()) {
-        printf("Dead Four does not exist.\n");
+        printf("Dead four does not exist.\n");
     } else {
         printf("\n");
     }
