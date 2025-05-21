@@ -3,155 +3,154 @@
 #include <string.h>
 #include "SouvenirShop.h"
 
-Souvenir *shelf = NULL;
-int size = 0;         
-int capacity = 0;    
+Souvenir *shelf = NULL; // 宣告全域變數
+int size = 0;          // 已儲存的商品數量
+int capacity = 0;      // 目前所配置的空間大小
 
+// 初始化紀念品商店
 void SouvenirInit() {
+    // 依照 MIN_SOUVENIRS 常數的值，動態配置記憶體空間
     capacity = MIN_SOUVENIRS;
     shelf = (Souvenir *)malloc(capacity * sizeof(Souvenir));
-    if (shelf == NULL) {
-        printf("Memory allocation failed!\n");
-        exit(1);
-    }
     size = 0;
 }
 
+// 檢查特定ID的商品是否已存在
 int findSouvenirIndex(int id) {
     for (int i = 0; i < size; i++) {
         if (shelf[i].id == id) {
             return i;
         }
     }
-    return -1;
+    return -1; // 未找到
 }
 
+// 新增商品
 void SouvenirInsert() {
+    int id;
+    float price;
+    char type;
+    
+    // 檢查是否需要擴展空間
     if (size >= capacity) {
         printf("Expanding for insufficient capacity!\n");
         capacity *= 2;
         shelf = (Souvenir *)realloc(shelf, capacity * sizeof(Souvenir));
-        if (shelf == NULL) {
-            printf("Memory reallocation failed!\n");
-            exit(1);
-        }
     }
     
-    Souvenir newItem;
-    
+    // 輸入ID
     printf("ID? ");
-    scanf("%d", &newItem.id);
+    scanf("%d", &id);
     
-    if (findSouvenirIndex(newItem.id) != -1) {
-        printf("ID %d exists\n", newItem.id);
+    // 檢查ID是否重複
+    if (findSouvenirIndex(id) != -1) {
+        printf("ID %d exists\n", id);
         return;
     }
     
+    // 輸入價格
     printf("Price? ");
-    scanf("%f", &newItem.price);
+    scanf("%f", &price);
     
-    char type;
+    // 輸入商品類型
     printf("Type [(b)ook, (k)eychain, (t)-shirt]? ");
     scanf(" %c", &type);
     
+    // 建立新商品結構體
+    Souvenir newSouvenir;
+    newSouvenir.id = id;
+    newSouvenir.price = price;
+    
+    // 根據商品類型輸入詳細資料
     switch (type) {
-        case 'b': 
-            newItem.type = book;
+        case 'b': // 書本
+            newSouvenir.type = book;
             printf("Author? ");
-            scanf(" %19[^\n]", newItem.attribute.author);
+            scanf(" %[^\n]", newSouvenir.attribute.author);
             break;
-        case 'k': 
-            newItem.type = keychain;
+            
+        case 'k': // 鑰匙圈
+            newSouvenir.type = keychain;
             printf("Material [(c)opper, (s)teel, (w)oods, (p)lastic]? ");
-            scanf(" %c", &type);
+            char material;
+            scanf(" %c", &material);
             
-            switch (type) {
-                case 'c':
-                    newItem.attribute.material = copper;
-                    break;
-                case 's':
-                    newItem.attribute.material = steel;
-                    break;
-                case 'w':
-                    newItem.attribute.material = woods;
-                    break;
-                case 'p':
-                    newItem.attribute.material = plastic;
-                    break;
-                default:
-                    printf("Invalid material\n");
-                    return;
+            // 檢查材質是否有效
+            if (material != 'c' && material != 's' && material != 'w' && material != 'p') {
+                printf("Invalid material\n");
+                return;
             }
+            newSouvenir.attribute.material = (KeychainMaterial)material;
             break;
-        case 't':
-            newItem.type = t_shirt;
-            printf("Size (XS, S, M, L, XL, XXL)? ");
-            char size[4];
-            scanf(" %3s", size);
             
-            if (strcmp(size, "XS") == 0) {
-                newItem.attribute.size = XS;
-            } else if (strcmp(size, "S") == 0) {
-                newItem.attribute.size = S;
-            } else if (strcmp(size, "M") == 0) {
-                newItem.attribute.size = M;
-            } else if (strcmp(size, "L") == 0) {
-                newItem.attribute.size = L;
-            } else if (strcmp(size, "XL") == 0) {
-                newItem.attribute.size = XL;
-            } else if (strcmp(size, "XXL") == 0) {
-                newItem.attribute.size = XXL;
+        case 't': // T恤
+            newSouvenir.type = t_shirt;
+            printf("Size (XS, S, M, L, XL, XXL)? ");
+            char sizeStr[4];
+            scanf("%s", sizeStr);
+            
+            TShirtSize tsize;
+            if (strcmp(sizeStr, "XS") == 0) {
+                tsize = XS;
+            } else if (strcmp(sizeStr, "S") == 0) {
+                tsize = S;
+            } else if (strcmp(sizeStr, "M") == 0) {
+                tsize = M;
+            } else if (strcmp(sizeStr, "L") == 0) {
+                tsize = L;
+            } else if (strcmp(sizeStr, "XL") == 0) {
+                tsize = XL;
+            } else if (strcmp(sizeStr, "XXL") == 0) {
+                tsize = XXL;
             } else {
                 printf("Invalid T-shirt size\n");
                 return;
             }
+            newSouvenir.attribute.size = tsize;
             break;
+            
         default:
             printf("Invalid type\n");
             return;
     }
     
-    shelf[size] = newItem;
+    // 將新商品加入到 shelf 中
+    shelf[size] = newSouvenir;
     size++;
     printf("Souvenir added\n");
 }
 
+// 移除商品
 void SouvenirRemove() {
     int id;
     printf("ID? ");
     scanf("%d", &id);
     
+    // 搜尋要刪除的商品
     int index = findSouvenirIndex(id);
-    
     if (index == -1) {
         printf("ID %d not found\n", id);
         return;
     }
     
+    // 調整陣列，移除該商品
     for (int i = index; i < size - 1; i++) {
         shelf[i] = shelf[i + 1];
     }
     size--;
     
-    if (size * 2 <= capacity && capacity > MIN_SOUVENIRS) {
+    // 檢查是否需要縮減空間
+    if (size < capacity / 2 && capacity > MIN_SOUVENIRS) {
         printf("Shrinking for excessive capacity!\n");
         capacity /= 2;
         shelf = (Souvenir *)realloc(shelf, capacity * sizeof(Souvenir));
-        if (shelf == NULL) {
-            printf("Memory reallocation failed!\n");
-            exit(1);
-        }
     }
     
     printf("Souvenir removed\n");
 }
 
+// 列出所有商品
 void SouvenirList() {
-    if (size == 0) {
-        printf("The shelf is empty\n");
-        return;
-    }
-    
     for (int i = 0; i < size; i++) {
         printf("[ID: %d][Price: $%.2f]", shelf[i].id, shelf[i].price);
         
@@ -159,6 +158,7 @@ void SouvenirList() {
             case book:
                 printf("[Type: Book, Author: %s]\n", shelf[i].attribute.author);
                 break;
+                
             case keychain:
                 printf("[Type: Keychain, Material: ");
                 switch (shelf[i].attribute.material) {
@@ -177,6 +177,7 @@ void SouvenirList() {
                 }
                 printf("]\n");
                 break;
+                
             case t_shirt:
                 printf("[Type: T-Shirt, Size: ");
                 switch (shelf[i].attribute.size) {
@@ -205,24 +206,26 @@ void SouvenirList() {
     }
 }
 
+// 尋找特定ID的商品
 void SouvenirFind() {
     int id;
     printf("ID? ");
     scanf("%d", &id);
     
     int index = findSouvenirIndex(id);
-    
     if (index == -1) {
         printf("ID %d not found\n", id);
         return;
     }
     
+    // 顯示找到的商品資訊
     printf("[ID: %d][Price: $%.2f]", shelf[index].id, shelf[index].price);
     
     switch (shelf[index].type) {
         case book:
             printf("[Type: Book, Author: %s]\n", shelf[index].attribute.author);
             break;
+            
         case keychain:
             printf("[Type: Keychain, Material: ");
             switch (shelf[index].attribute.material) {
@@ -241,6 +244,7 @@ void SouvenirFind() {
             }
             printf("]\n");
             break;
+            
         case t_shirt:
             printf("[Type: T-Shirt, Size: ");
             switch (shelf[index].attribute.size) {
@@ -268,6 +272,7 @@ void SouvenirFind() {
     }
 }
 
+// 顯示架子的容量和已填充數量
 void SouvenirShowCapacityNFilled() {
     printf("Shelf capacity: %d\n", capacity);
     printf("Souvenirs filled: %d\n", size);
